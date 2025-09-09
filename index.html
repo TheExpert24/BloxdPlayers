@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloxd Players</title>
+    <meta name="description" content="Bloxd Players is an OHS Society dedicated to building a server that remebers those who perished and were affected by the 9/11 attacks.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+        <div id="ui">
+            <div id="crosshair"></div>
+            <div id="toolbar">
+                <div class="block-selector active" data-block="grass">🟩</div>
+                <div class="block-selector" data-block="stone">⬜</div>
+                <div class="block-selector" data-block="wood">🟫</div>
+                <div class="block-selector" data-block="dirt">🟤</div>
+            </div>
+            <div id="controls">
+                <p>WASD: Move | Mouse: Look | Click: Place/Remove Block | Space: Jump</p>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
