@@ -13,8 +13,31 @@ class BloxdGame {
         this.mouse = { x: 0, y: 0 };
         this.velocity = { x: 0, y: 0, z: 0 };
         this.onGround = false;
+        this.isDay = true;
 
+        this.getTimezoneAndSetTime();
         this.init();
+    }
+
+    getTimezoneAndSetTime() {
+        const timezoneMap = {
+            'PST': 'America/Los_Angeles', 'PDT': 'America/Los_Angeles',
+            'MST': 'America/Denver', 'MDT': 'America/Denver',
+            'CST': 'America/Chicago', 'CDT': 'America/Chicago',
+            'EST': 'America/New_York', 'EDT': 'America/New_York',
+            'GMT': 'Europe/London', 'BST': 'Europe/London',
+            'CET': 'Europe/Paris', 'CEST': 'Europe/Paris',
+            'JST': 'Asia/Tokyo', 'KST': 'Asia/Seoul',
+            'IST': 'Asia/Kolkata', 'AEST': 'Australia/Sydney'
+        };
+        
+        const input = prompt('Enter your timezone (e.g., PST, EST, CST, MST, GMT, JST):')?.toUpperCase();
+        const timezone = timezoneMap[input] || input || Intl.DateTimeFormat().resolvedOptions().timeZone;
+        
+        const now = new Date();
+        const timeInZone = new Date(now.toLocaleString('en-US', { timeZone: timezone }));
+        const hour = timeInZone.getHours();
+        this.isDay = hour >= 6 && hour < 18;
     }
 
     init() {
@@ -29,31 +52,43 @@ class BloxdGame {
     }
 
     setupLighting() {
-        this.scene.background = new THREE.Color(0x000011);
-        
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
-        this.scene.add(ambientLight);
-
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        directionalLight.position.set(50, 50, 50);
-        directionalLight.castShadow = true;
-        directionalLight.shadow.mapSize.width = 2048;
-        directionalLight.shadow.mapSize.height = 2048;
-        this.scene.add(directionalLight);
+        if (this.isDay) {
+            this.scene.background = new THREE.Color(0x87CEEB);
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.8);
+            this.scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+            directionalLight.position.set(50, 50, 50);
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = 2048;
+            directionalLight.shadow.mapSize.height = 2048;
+            this.scene.add(directionalLight);
+        } else {
+            this.scene.background = new THREE.Color(0x000011);
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.3);
+            this.scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0x9999ff, 0.4);
+            directionalLight.position.set(50, 50, 50);
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = 2048;
+            directionalLight.shadow.mapSize.height = 2048;
+            this.scene.add(directionalLight);
+        }
     }
 
     createStars() {
-        const starGeometry = new THREE.SphereGeometry(0.1, 4, 4);
-        const starMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
-        
-        for (let i = 0; i < 200; i++) {
-            const star = new THREE.Mesh(starGeometry, starMaterial);
-            star.position.set(
-                (Math.random() - 0.5) * 200,
-                Math.random() * 50 + 20,
-                (Math.random() - 0.5) * 200
-            );
-            this.scene.add(star);
+        if (!this.isDay) {
+            const starGeometry = new THREE.SphereGeometry(0.1, 4, 4);
+            const starMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
+            
+            for (let i = 0; i < 200; i++) {
+                const star = new THREE.Mesh(starGeometry, starMaterial);
+                star.position.set(
+                    (Math.random() - 0.5) * 200,
+                    Math.random() * 50 + 20,
+                    (Math.random() - 0.5) * 200
+                );
+                this.scene.add(star);
+            }
         }
     }
 
@@ -109,7 +144,7 @@ class BloxdGame {
         document.addEventListener('keyup', (e) => this.keys[e.code] = false);
         
         document.addEventListener('mousemove', (e) => {
-            this.mouse.x += e.movementX * 0.002;
+            this.mouse.x -= e.movementX * 0.002;
             this.mouse.y -= e.movementY * 0.002;
             this.mouse.y = Math.max(-Math.PI/2, Math.min(Math.PI/2, this.mouse.y));
         });
@@ -117,8 +152,19 @@ class BloxdGame {
         document.addEventListener('click', () => {
             if (document.pointerLockElement !== document.getElementById('gameCanvas')) {
                 document.getElementById('gameCanvas').requestPointerLock();
-            } else {
-                this.handleClick();
+            }
+        });
+
+        document.addEventListener('mousedown', (e) => {
+            if (document.pointerLockElement === document.getElementById('gameCanvas')) {
+                e.preventDefault();
+                this.handleClick(e.button);
+            }
+        });
+
+        document.addEventListener('contextmenu', (e) => {
+            if (document.pointerLockElement === document.getElementById('gameCanvas')) {
+                e.preventDefault();
             }
         });
     }
@@ -205,7 +251,7 @@ class BloxdGame {
         }
     }
 
-    handleClick() {
+    handleClick(button) {
         this.raycaster.setFromCamera({ x: 0, y: 0 }, this.camera);
         const intersects = this.raycaster.intersectObjects(this.scene.children.filter(obj => obj.geometry));
 
@@ -213,21 +259,27 @@ class BloxdGame {
             const intersect = intersects[0];
             
             if (intersect.object.userData.isSign) {
-                window.open('https://spcs.instructure.com/courses/9094/pages/bloxd-players', '_blank');
+                window.open('./bloxd-site.html', '_blank');
                 return;
             }
             
             const point = intersect.point;
             const normal = intersect.face.normal;
             
-            const blockPos = {
-                x: Math.floor(point.x + normal.x * 0.5),
-                y: Math.floor(point.y + normal.y * 0.5),
-                z: Math.floor(point.z + normal.z * 0.5)
-            };
-
             if (intersect.distance < 5) {
-                if (normal.x || normal.y || normal.z) {
+                if (button === 0) { // Left click - remove block
+                    const blockPos = {
+                        x: Math.floor(point.x - normal.x * 0.5),
+                        y: Math.floor(point.y - normal.y * 0.5),
+                        z: Math.floor(point.z - normal.z * 0.5)
+                    };
+                    this.removeBlock(blockPos.x, blockPos.y, blockPos.z);
+                } else if (button === 2) { // Right click - place block
+                    const blockPos = {
+                        x: Math.floor(point.x + normal.x * 0.5),
+                        y: Math.floor(point.y + normal.y * 0.5),
+                        z: Math.floor(point.z + normal.z * 0.5)
+                    };
                     this.placeBlock(blockPos.x, blockPos.y, blockPos.z, this.selectedBlock);
                 }
             }
