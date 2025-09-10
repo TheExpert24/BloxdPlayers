@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLOXD PLAYERS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        body {
+            font-family: 'Press Start 2P', monospace;
+            color: white;
+            overflow-x: hidden;
+            will-change: scroll-position;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: white;
+            text-shadow: 2px 2px 0px #000;
+        }
+
+        .hamburger {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            z-index: 1001;
+            font-size: 1.5rem;
+        }
+
+        .menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            padding: 80px 20px 20px;
+        }
+
+        .menu.open {
+            right: 0;
+        }
+
+        .menu-item {
+            padding: 15px;
+            border: 2px solid white;
+            margin: 10px 0;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .leaders-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            display: none;
+            padding: 100px 50px 50px;
+            overflow-y: auto;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        .leader {
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px solid white;
+            border-radius: 10px;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .leader-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid white;
+            flex-shrink: 0;
+            background: #666;
+        }
+
+        .leader-info {
+            flex: 1;
+        }
+
+        .leader h3 {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .leader ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+
+        .leader li {
+            margin: 8px 0;
+            font-size: 0.7rem;
+            line-height: 1.4;
+        }
+
+        .leader li:before {
+            content: '• ';
+            color: white;
+        }
+
+        .page {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-size: cover;
+            background-position: center;
+            background-attachment: local;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            position: relative;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            will-change: transform;
+        }
+
+        .page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+
+        .description {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            text-align: center;
+            line-height: 1.8;
+            font-size: 0.9rem;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid white;
+            border-radius: 10px;
+            margin: 0 20px;
+        }
+
+        .page1 {
+            background-image: url('Lujia Memorial.png');
+        }
+        
+        .page2 {
+            background-image: url('TwinTower.png');
+        }
+        
+        .page3 {
+            background-image: url('overview.png');
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>BLOXD PLAYERS</h1>
+    </div>
+
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
+
+    <div class="menu" id="menu">
+        <div class="menu-item" onclick="showLeaders()">Society Leaders</div>
+    </div>
+
+    <div class="leaders-page" id="leadersPage">
+        <div class="close-btn" onclick="hideLeaders()">×</div>
+        <h2>Society Leaders</h2>
+        
+        <div class="leader">
+            <img class="leader-photo" src="https://via.placeholder.com/80x80/4CAF50/FFFFFF?text=AJ" alt="Jackson He">
+            <div class="leader-info">
+                <h3>Jackson He - Co-Leader</h3>
+                <ul>
+                    <li>Jackson is my best bud and lives in LA. </li>
+                    <li>He likes to see if Mexicans are drug dealers or not by saying "Hermanooooo"</li>
+                    <li>He is helping me prove that snow is just falling cocaine from the sky.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="leader">
+            <img class="leader-photo" src="image.png" alt="Lilian Guo">
+            <div class="leader-info">
+                <h3>Lilian Guo - Co-Leader</h3>
+                <ul>
+                    <li>13 yrs old (cuz it will be pretty up to date next month)</li>
+                    <li>7th grade</li>
+                    <li>Debate</li>
+                    <li>loves grinding on bloxd</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="leader">
+            <img class="leader-photo" src="https://via.placeholder.com/80x80/FF9800/FFFFFF?text=MR" alt="Arthur Shu">
+            <div class="leader-info">
+                <h3>Arthur Shu - Co-Leader</h3>
+                <ul>
+                    <li>Loves to swear a lot</li>
+                    <li>Is good at PVPing Jackson</li>
+                    <li>Sounds like a grown ass man</li>
+                    <li>Likes windows.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="leader">
+            <img class="leader-photo" src="31132.png" alt="Vajra Vanukuri">
+            <div class="leader-info">
+                <h3>Vajra Vanukuri - Co-Leader</h3>
+                <ul>
+                    <li>14 years old</li>
+                    <li>Coding and Crit Racing</li>
+                    <li>Coded this website</li>
+                    <li>Ultimate Sigma Rizzler</li>
+                    <li>Does not like manual labor</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById('menu').classList.toggle('open');
+        }
+
+        function showLeaders() {
+            document.getElementById('leadersPage').style.display = 'block';
+            document.getElementById('menu').classList.remove('open');
+        }
+
+        function hideLeaders() {
+            document.getElementById('leadersPage').style.display = 'none';
+        }
+    </script>
+
+    <div class="page page1">
+        <div class="description">
+            The Bloxd Players is a Stanford Online High School Society that was founded to have fun playing bloxd.io and to build a public server in honor of those who perished on September 11, 2001. Our mission is to remember those who perished and were affected by the 9/11 attacks as well as an OHS student that died in 2025.
+        </div>
+    </div>
+
+    <div class="page page2">
+        <div class="description">
+            We meet every Friday at 5-6 PM PST to work on the server while collaborating skillfully. Everyone is welcome as long as you follow the terms of service listed below and play respectfully and carefully.
+        </div>
+    </div>
+
+    <div class="page page3">
+        <div class="description">
+            Links: http://bloxd.io/ (Go into Sandbox creative and use the server name: 911-memorial), https://app.pronto.io/invites/VbH9zVnpB
+        </div>
+    </div>
+</body>
+</html>
